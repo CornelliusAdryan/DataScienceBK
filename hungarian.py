@@ -4,9 +4,7 @@ import numpy as np
 from imblearn.over_sampling import SMOTE
 from sklearn.metrics import accuracy_score
 import streamlit as st
-import time
 import pickle
-from joblib import dump, load
 from sklearn.preprocessing import MinMaxScaler
 
 with open("data/hungarian.data", encoding='Latin1') as file:
