@@ -6,6 +6,8 @@ from sklearn.metrics import accuracy_score
 import streamlit as st
 import time
 import pickle
+from joblib import dump, load
+from sklearn.preprocessing import MinMaxScaler
 
 with open("data/hungarian.data", encoding='Latin1') as file:
   lines = [line.strip() for line in file]
@@ -81,19 +83,24 @@ df_clean = df_selected.fillna(value=fill_values)
 df_clean.drop_duplicates(inplace=True)
 
 X = df_clean.drop("target", axis=1)
-y = df_clean['target']
+y = df_clean.iloc[:,-1]
 
 smote = SMOTE(random_state=42)
 X, y = smote.fit_resample(X, y)
-
+# ---------------------------------------------------
+scaler = MinMaxScaler()
+X_normal = scaler.fit_transform(X)
+# -----------------------------------------------------
 model = pickle.load(open("model/xgb_model.pkl", 'rb'))
 
-y_pred = model.predict(X)
+
+y_pred = model.predict(X_normal)
 accuracy = accuracy_score(y, y_pred)
 accuracy = round((accuracy * 100), 2)
 
-df_final = X
+df_final = pd.DataFrame(X, columns=df_clean.columns[:-1])
 df_final['target'] = y
+
 
 # ========================================================================================================================================================================================
 
